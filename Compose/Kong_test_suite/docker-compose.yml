@@ -10,6 +10,8 @@ services:
       POSTGRES_DB: kong
     expose:
       - "5432"
+    networks:
+      - my-net
 #kong box
   kong:
     links:
@@ -32,9 +34,27 @@ services:
     security_opt:
       - seccomp:unconfined
     build: ../../Builds/kong/
-#    restart: always
     depends_on:
       - kong-database
+    networks:
+      - my-net
+#wiremock RESTful mock server
+  wiremock:
+    image: bradqwood/wiremock
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    expose:
+      - "8080"
+      - "8081"
+    links:
+      - kong
+      - ubuntu-dev
+    volumes:
+      - /c/Users/micro/Docker/Mountpoints/wiremock:/home/wiremock
+    networks:
+      - my-net
+
 # ubuntu test box
   ubuntu-dev:
     links:
@@ -51,3 +71,10 @@ services:
       - "2222:22"
     expose:
       - "22"
+    networks:
+      - my-net
+
+# set up the networks to connect onto these containers
+networks:
+  my-net:
+    driver: bridge
