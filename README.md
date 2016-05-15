@@ -35,7 +35,7 @@ docker-compose up -d
 ```
 docker exec -ti kongtestsuite_ubuntu-dev_1 bash
 ```
-  - at this shell you can `cd /root/mnt` and execute your kong shell scripts from there, as they're mounted to the host machine, you can edit them in your favourite host-based editor. 
+  - at this shell you can `cd /root/mnt` and execute your kong shell scripts from there; and as they're mounted to the host machine, you can edit them in your favourite host-based editor. 
   - set up your JSON mocks in the wiremock mountpoint and save as needed.
   - See under `Mountpoints` for samples of both Kong and JSON stubs
 
