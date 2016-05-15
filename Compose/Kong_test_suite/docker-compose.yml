@@ -2,7 +2,7 @@ version: '2'
 services:
 #database box
   kong-database:
-    image: bradqwood/postres
+    image: bradqwood/postgres
     ports:
       - "5432:5432"
     environment:
