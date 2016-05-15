@@ -26,7 +26,7 @@ cd ./Compose/Kong_test_suite/
  - once in `./Compose/Kong_test_suite/` edit `docker-compose.yml` and set the `volumes:` sections to point to your local machine mount points. There are 2:
    - `ubuntu:/root/mnt` - this is so that any kong or other scripts you need to run on the ubuntu box can live outside of the container.
    - `wiremock:/home/wiremock` - this maps to a filesystem that the standalone wiremock system uses to hold your JSON stubs and mapping files.  See the [Wiremock site](http://wiremock.org/running-standalone.html) for more details on this.
- - once you've set the mountpoints, then create the images, install the containers and bring them up ty typing...
+ - once you've set the mountpoints, then create the images, install the containers and bring them up by typing...
 ```
 docker-compose up -d
 ```
