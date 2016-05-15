@@ -1,6 +1,6 @@
 # Docker-Kong
 
-This is a collection of Docker containers with the appropriate docker images, docker-compose scaffolding and scripts to get [Kong](http://getkong.org), the API management tool, up and running.
+This is a collection of Docker containers with the appropriate docker images, docker-compose scaffolding and scripts to get [Kong](http://getkong.org), the API management tool, up and running. *_It is NOT for PRODUCTION use!_*
 
 ## What is does
 It creates 4 docker containers and runs them in your docker environment to enable docker-based testing of Kong. The containers are
