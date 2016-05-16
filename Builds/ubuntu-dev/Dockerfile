@@ -1,4 +1,5 @@
 FROM bradqwood/ubuntu
+# a fork from ubuntu
 MAINTAINER Bradley Wood <docker@bradleywood.com>
 RUN /bin/bash -c 'apt-get update && \
 	apt-get install -y curl && \
