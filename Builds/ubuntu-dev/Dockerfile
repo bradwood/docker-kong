@@ -9,7 +9,7 @@ RUN /bin/bash -c 'apt-get update && \
 	apt-get install -y iputils-ping && \
 	apt-get install -y ngrep && \
 	apt-get install -y nmap && \
-	apt-get install -y openssh-server && \
+	apt-get install -y openssl && \
 	apt-get install -y httpie' 
 
 #sshd setup

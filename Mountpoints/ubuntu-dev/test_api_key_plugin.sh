@@ -36,6 +36,15 @@ http POST kong:8001/apis \
 	request_path=/api/mobile/v1.0 \
 	strip_request_path=true
 
+echo Installing SSH Plugin and loading certificates...
+echo
+
+http POST kong:8001/apis/mobile_api_v1.0/plugins \
+	name=ssl \
+	config.cert=@./server.crt \
+	config.key=@./server.key \
+	config.only_https=true
+
 
 echo Installing the API key plugin
 echo
@@ -72,9 +81,9 @@ echo
 echo Now testing the API through Kong...
 echo Firstly without the API Key...
 
-http --print HBhb GET http://kong:8000/api/mobile/v1.0/hello Host:api.host.com
+http --verify=no --print HBhb GET https://kong:8443/api/mobile/v1.0/hello Host:api.host.com
 
 echo And now with the API Key \($APIKEY\) as a header
 echo
 
-http --print HBhb GET http://kong:8000/api/mobile/v1.0/hello Host:api.host.com apikey:$APIKEY
+http --verify=no --print HBhb GET https://kong:8443/api/mobile/v1.0/hello Host:api.host.com apikey:$APIKEY
