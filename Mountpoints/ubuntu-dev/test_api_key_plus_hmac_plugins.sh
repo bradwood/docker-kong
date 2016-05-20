@@ -145,6 +145,31 @@ echo ... with correct API Key but no HMAC credentials
 echo 
 http --verify=no --print HBhb GET https://kong:8443/api/mobile/v1.0/hello Host:api.host.com apikey:$APIKEY
 
-echo ... with ni API Key and no HMAC credentials
+echo ... with no API Key and no HMAC credentials
 echo
 http --verify=no --print HBhb GET https://kong:8443/api/mobile/v1.0/hello Host:api.host.com
+
+echo
+echo lets test the clock skew now.
+echo calling the same successful call above 
+echo
+
+http --verify=no --print HBhb GET https://kong:8443/api/mobile/v1.0/hello \
+	Host:api.host.com \
+	apikey:$APIKEY \
+	Date:"$DATE" \
+	Authorization:hmac\ username=\"bob\",\ algorithm=\"hmac-sha1\",\ headers=\"date\",\ signature=\"$(echo $SIGNATURE | base64)\"
+
+echo 
+echo now sleeping for 301 secs...
+echo
+sleep 301
+echo
+echo calling the same successful call above AGAIN -- this should fail.  
+
+http --verify=no --print HBhb GET https://kong:8443/api/mobile/v1.0/hello \
+	Host:api.host.com \
+	apikey:$APIKEY \
+	Date:"$DATE" \
+	Authorization:hmac\ username=\"bob\",\ algorithm=\"hmac-sha1\",\ headers=\"date\",\ signature=\"$(echo $SIGNATURE | base64)\"
+
