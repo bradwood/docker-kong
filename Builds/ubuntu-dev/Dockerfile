@@ -9,8 +9,18 @@ RUN /bin/bash -c 'apt-get update && \
 	apt-get install -y iputils-ping && \
 	apt-get install -y ngrep && \
 	apt-get install -y nmap && \
+	apt-get install -y cl-base64 && \
+	apt-get install -y coreutils && \
 	apt-get install -y openssl && \
-	apt-get install -y httpie' 
+	apt-get install -y manpages && \
+	apt-get install -y man-db && \
+	apt-get install -y python-pip && \
+	apt-get install -y httpie \
+	pip install --upgrade pip \
+	pip install httpie-oauth \
+	pip install httpie-hmac-auth \
+	pip install httpie-api-auth \
+	' 
 
 #sshd setup
 # not working for some reason -- giving up for now..
