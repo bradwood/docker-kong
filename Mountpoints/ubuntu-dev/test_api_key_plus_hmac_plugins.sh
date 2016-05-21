@@ -85,7 +85,7 @@ echo
 
 # need to pass in an empty JSON doc to make this work
 APIKEY=$(echo '{}' | http POST kong:8001/consumers/$CONSUMER_NAME/key-auth \
-	Content-Type:application/json | jq '.key' | sed 's/"//g' )
+	Content-Type:application/json | jq '.key' -r )
 
 echo Received API key $APIKEY ...
 echo
