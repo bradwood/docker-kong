@@ -1,0 +1,10 @@
+{
+    "request": {
+        "method": "POST",
+        "urlPattern": "/oauth2/token"
+    },
+    "response": {
+        "proxyBaseUrl" : "https://kong:8443/api/mobile/v1.0"
+    }
+
+}

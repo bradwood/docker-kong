@@ -47,11 +47,13 @@ services:
     expose:
       - "8080"
       - "8081"
+    environment:
+      WIREMOCK_ARGS: "--verbose --https-port 8081"
     links:
       - kong
       - ubuntu-dev
     volumes:
-      - /c/Users/micro/Docker/Mountpoints/wiremock:/home/wiremock
+      - /Users/santiagoferrer/Developer/projects/bidco/docker-kong/Mountpoints/wiremock:/home/wiremock
     networks:
       - my-net
 
@@ -60,7 +62,7 @@ services:
     links:
       - kong
     volumes:
-      - /c/Users/micro/Docker/Mountpoints/ubuntu-dev:/root/mnt
+      - /Users/santiagoferrer/Developer/projects/bidco/docker-kong/Mountpoints/ubuntu-dev:/root/mnt
  #hack to get it not to exit
     entrypoint:
       - tail
