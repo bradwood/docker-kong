@@ -40,7 +40,7 @@ http POST kong:8001/apis \
 	request_path=/api/mobile/v1.0 \
 	strip_request_path=true
 
-echo Installing SSH Plugin and loading certificates for $API_NAME API 
+echo Installing SSL Plugin and loading certificates for $API_NAME API 
 echo
 
 http POST kong:8001/apis/$API_NAME/plugins \

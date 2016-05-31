@@ -2,6 +2,7 @@ FROM bradqwood/ubuntu
 # a fork from ubuntu
 MAINTAINER Bradley Wood <docker@bradleywood.com>
 RUN /bin/bash -c 'apt-get update && \
+	apt-get install -y apt-utils && \
 	apt-get install -y curl && \
 	apt-get install -y jq && \
 	apt-get install -y git && \
@@ -21,6 +22,9 @@ RUN /bin/bash -c 'apt-get update && \
 	pip install httpie-hmac-auth \
 	pip install httpie-api-auth \
 	' 
+
+# turns off the annoying message about unsigned SSL certs from httpie
+ENV PYTHONWARNINGS "ignore:Unverified HTTPS request"
 
 #sshd setup
 # not working for some reason -- giving up for now..
