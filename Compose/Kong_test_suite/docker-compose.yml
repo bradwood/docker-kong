@@ -47,6 +47,8 @@ services:
     expose:
       - "8080"
       - "8081"
+    environment:
+      WIREMOCK_ARGS: "--verbose --https-port 8081"
     links:
       - kong
       - ubuntu-dev

@@ -2,7 +2,9 @@ FROM bradqwood/ubuntu
 # a fork from ubuntu
 MAINTAINER Bradley Wood <docker@bradleywood.com>
 RUN /bin/bash -c 'apt-get update && \
-	apt-get install -y apt-utils && \
+	apt-get install -y software-properties-common && \
+	add-apt-repository universe && \
+	apt-get intsall -y apt-utils && \
 	apt-get install -y curl && \
 	apt-get install -y jq && \
 	apt-get install -y git && \
@@ -16,10 +18,10 @@ RUN /bin/bash -c 'apt-get update && \
 	apt-get install -y manpages && \
 	apt-get install -y man-db && \
 	apt-get install -y python-pip && \
-	apt-get install -y httpie \
-	pip install --upgrade pip \
-	pip install httpie-oauth \
-	pip install httpie-hmac-auth \
+	apt-get install -y httpie && \
+	pip install --upgrade pip && \
+	pip install httpie-oauth && \
+	pip install httpie-hmac-auth && \
 	pip install httpie-api-auth \
 	' 
 
