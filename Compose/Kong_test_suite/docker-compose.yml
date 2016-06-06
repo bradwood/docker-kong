@@ -53,7 +53,7 @@ services:
       - kong
       - ubuntu-dev
     volumes:
-      - /c/Users/micro/Docker/Mountpoints/wiremock:/home/wiremock
+      - /c/Users/micro/Docker/docker-kong/Mountpoints/wiremock:/home/wiremock
     networks:
       - my-net
 
@@ -62,7 +62,7 @@ services:
     links:
       - kong
     volumes:
-      - /c/Users/micro/Docker/Mountpoints/ubuntu-dev:/root/mnt
+      - /c/Users/micro/Docker/docker-kong/Mountpoints/ubuntu-dev:/root/mnt
  #hack to get it not to exit
     entrypoint:
       - tail
