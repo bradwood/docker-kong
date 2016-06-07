@@ -14,6 +14,7 @@ RUN /bin/bash -c 'apt-get update && \
 	apt-get install -y openssl && \
 	apt-get install -y manpages && \
 	apt-get install -y man-db && \
+	apt-get install -y gridsite-clients && \
 	apt-get install -y python-pip && \
 	apt-get install -y httpie && \
 	pip install --upgrade pip && \

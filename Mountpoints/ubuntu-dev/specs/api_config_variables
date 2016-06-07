@@ -1,0 +1,82 @@
+#API CONFIGURATION
+
+# Note all the SECURE_* variables are associated to each other by ordinality (1st, 2nd, 3rd, etc)
+# - a poor man's hash/struct data type.
+
+#API names for various APIS set up in Kong. These will be secured via the OAUTH2 mechanism
+#and form part of the URLs used to manage the APIs on the Kong admin port (8001)
+SECURE_API_NAMES=('consumer-api-v1.0' 'merchant-api-v1.0' 'm-manager_api-v1.0' 'management-api-v1.0')
+# Upstream URLs for each API -- all point to the same wiremock service root directory
+SECURE_API_UPSTREAM_URLS=('http://wiremock:8080/' 'http://wiremock:8080/' 'http://wiremock:8080/' 'http://wiremock:8080/')
+# Request paths for each API - the public path exposed by Kong
+SECURE_API_REQUEST_PATHS=('/consumer/v1.0' '/merchant/v1.0' '/m-manager/v1.0' '/admin/v1.0')
+#if set to true, the abovementioned request path with be stripped before the request is proxied
+SECURE_STRIP_REQUEST_PATH=false
+# ACLs for API access are based on white- or black-list groups. We will use white-lists
+# The following group names will be set up, each againsts its associated API.
+# A consumer must belong to any of the associated groups in order to call the associated API.
+#
+# Memebers of the admin  groupare permissioned to call *any* API
+
+SECURE_API_WHITELIST_GROUPS=( 'consumer_group, admin_group' \
+							  'merchant_group, admin_group' \
+							  'm-manager_group, admin_group' \
+							  'admin_group')
+
+
+#API used to authenticate and authorise a user. Will issue an OAUTH token and also managed OAUTH token re-issues
+AUTHENTICATE_API_NAME=authentication-api-v1.0
+AUTHENTICATE_API_UPSTREAM_URL=https://wiremock:8081/
+AUTHENTICATE_API_REQUEST_PATH=/v1.0/authenticate
+AUTENTICATE_API_STRIP_REQUEST_PATH=false
+
+#IMPORTANT -- the below must agree with those set up in wiremock
+#See the wiremock mountpoint at wiremock:/mappings/user_authenticate_*.json
+
+AUTH_USERNAME=brad
+AUTH_PASSWORD=xQ845c
+
+
+#OAUTH Specificas
+OAUTH_TOKEN_EXPIRATION=7200 # seconds
+
+#CONSUMER CONFIGURATION
+#Set up consumer name prefixes in an arrat
+CONSUMER_PREFIXES=(MOB MER MA BID)
+
+#Example Mobile consumer details
+MOB_CONSUMER_NAME=RBS
+MOB_CONSUMER_CUSTOM_ID=RBS_103485
+MOB_CONSUMER_OAUTH_APP_NAME="RBS plc mobile app"
+# ACLs for this consumer
+MOB_CONSUMER_ACL_GROUPS=consumer_group
+
+#Example Merchant consumer details
+MER_CONSUMER_NAME=BootsPLC
+MER_CONSUMER_CUSTOM_ID=BOOTS_012344
+MER_CONSUMER_OAUTH_APP_NAME="Boots.com Mobile App"
+# ACLs for this consumer
+MER_CONSUMER_ACL_GROUPS=merchant_group
+
+#Example Merchant Manager (Acquirer) consumer details
+MA_CONSUMER_NAME=NETS
+MA_CONSUMER_CUSTOM_ID=NETS_334444
+MA_CONSUMER_OAUTH_APP_NAME="NETS"
+# ACLs for this consumer
+MA_CONSUMER_ACL_GROUPS=manager_group
+
+#Internal consumer details
+BID_CONSUMER_NAME=964Bidco
+BID_CONSUMER_CUSTOM_ID=BIDCO_4354354
+BID_CONSUMER_OAUTH_APP_NAME="964 Bidco Management App"
+# ACLs for this consumer
+# Bidco Consumer can access *all* APIs
+BID_CONSUMER_ACL_GROUPS=admin_group
+
+# Provision key file name -- used as a temp store for provision keys
+PROVISION_KEY_FILE=./provision_keys
+# Client credentials file -- used as a temp location for client app credentials
+CLIENT_CREDENTIALS_FILE=./client_credentials
+
+# ACLs for API access are based on white- or black-list groups.
+# We will use white-lists

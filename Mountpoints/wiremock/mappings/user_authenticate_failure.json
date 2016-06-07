@@ -1,0 +1,14 @@
+{
+    "priority": 2,
+    "request": {
+        "method": "POST",
+        "url": "/v1.0/authenticate"
+    },
+    "response": {
+            "status": 401,
+            "body": "Unauthorised",
+            "headers": {
+                    "Content-Type": "text/plain"
+            }
+    }
+}
