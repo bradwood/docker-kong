@@ -45,7 +45,6 @@ echo These private credentials must be securely provided to the Client Applicati
 echo Owner\/Developer as they will be needed to authenticate their app against our API...
 
 for i in "${!CONSUMER_PREFIXES[@]}"; do
-	echo Creating OAUTH App and Credentials for
 
     CONSUMER_NAME=\$${CONSUMER_PREFIXES[$i]}_CONSUMER_NAME
     eval CONSUMER=$CONSUMER_NAME

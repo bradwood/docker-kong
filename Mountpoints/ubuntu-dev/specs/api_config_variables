@@ -5,11 +5,11 @@
 
 #API names for various APIS set up in Kong. These will be secured via the OAUTH2 mechanism
 #and form part of the URLs used to manage the APIs on the Kong admin port (8001)
-SECURE_API_NAMES=('consumer-api-v1.0' 'merchant-api-v1.0' 'm-manager_api-v1.0' 'management-api-v1.0')
+SECURE_API_NAMES=('consumer' 'merchant' 'm-manager' 'admin')
 # Upstream URLs for each API -- all point to the same wiremock service root directory
 SECURE_API_UPSTREAM_URLS=('http://wiremock:8080/' 'http://wiremock:8080/' 'http://wiremock:8080/' 'http://wiremock:8080/')
 # Request paths for each API - the public path exposed by Kong
-SECURE_API_REQUEST_PATHS=('/consumer/v1.0' '/merchant/v1.0' '/m-manager/v1.0' '/admin/v1.0')
+SECURE_API_REQUEST_PATHS=('/consumer' '/merchant' '/m-manager' '/admin')
 #if set to true, the abovementioned request path with be stripped before the request is proxied
 SECURE_STRIP_REQUEST_PATH=false
 # ACLs for API access are based on white- or black-list groups. We will use white-lists
@@ -18,30 +18,38 @@ SECURE_STRIP_REQUEST_PATH=false
 #
 # Memebers of the admin  groupare permissioned to call *any* API
 
-SECURE_API_WHITELIST_GROUPS=( 'consumer_group, admin_group' \
-							  'merchant_group, admin_group' \
-							  'm-manager_group, admin_group' \
+SECURE_API_WHITELIST_GROUPS=( 'consumer_group,admin_group' \
+							  'merchant_group,admin_group' \
+							  'm-manager_group,admin_group' \
 							  'admin_group')
 
 
 #API used to authenticate and authorise a user. Will issue an OAUTH token and also managed OAUTH token re-issues
-AUTHENTICATE_API_NAME=authentication-api-v1.0
+AUTHENTICATE_API_NAME=authenticate
 AUTHENTICATE_API_UPSTREAM_URL=https://wiremock:8081/
-AUTHENTICATE_API_REQUEST_PATH=/v1.0/authenticate
+AUTHENTICATE_API_REQUEST_PATH=/authenticate
 AUTENTICATE_API_STRIP_REQUEST_PATH=false
+
+# The version of the API that is being called by the client app, and which is being
+# served by the services. Note that the internal service abstraction layer will be able
+# to map major.minor version number calls to the appropriate internal (back-end) services
+# using a more granual versioning scheme (major.minor.patch) or similar.
+
+API_VERSION=v1.0
 
 #IMPORTANT -- the below must agree with those set up in wiremock
 #See the wiremock mountpoint at wiremock:/mappings/user_authenticate_*.json
-
 AUTH_USERNAME=brad
 AUTH_PASSWORD=xQ845c
 
 
-#OAUTH Specificas
-OAUTH_TOKEN_EXPIRATION=7200 # seconds
+#OAUTH Specifics
+#OAUTH_TOKEN_EXPIRATION=7200 # in seconds = 2hrs
+# reduced for testing purposes
+OAUTH_TOKEN_EXPIRATION=30 # seconds -- default is 2 hours.
 
 #CONSUMER CONFIGURATION
-#Set up consumer name prefixes in an arrat
+#Set up consumer name prefixes in an array
 CONSUMER_PREFIXES=(MOB MER MA BID)
 
 #Example Mobile consumer details

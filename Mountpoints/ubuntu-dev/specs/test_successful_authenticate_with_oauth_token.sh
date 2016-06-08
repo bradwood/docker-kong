@@ -15,22 +15,31 @@
 . client_credentials
 
 # now call the public kong interface to request a token as if I am a client/sdk app
-# NOTE client_* parameters would have been previously provided to this custoemr
+# NOTE client_* parameters would have been previously provided to this customer
 # username/password would have been created by the end user in the sign-up use case.
 # for this I am checking the credentials are correct in WireMock.
 # See the wiremock mountpoint at wiremock:/mappings/user_authenticate_*.json
+#
+# Note, that while the authentication API is used to authenticate *all* secure APIs
+# The call must pass the 'scope' of the secure API that the user desires access to.
+# This will ensure that that a provision_key from the appropriate secure API can be
+# obtained.
+#
+# The format of the scope parameter is: /<api-name/v<n.m>. e.g., /merchant/v1.0.
 
 echo calling authentication API as an end user and passing:
 echo
-echo POST https://kong:8443/v1.0/authenticate
+echo POST https://kong:8443/authenticate/$API_VERSION
 echo client_id=$MOB_CLIENT_ID
 echo client_secret=$MOB_CLIENT_SECRET
+echo scope=${SECURE_API_REQUEST_PATHS[0]}/$API_VERSION #the consumer API base URL
 echo username=$AUTH_USERNAME
 echo password=$AUTH_PASSWORD
 
-CLIENT_REQUEST=$( http --verify=no POST https://kong:8443/v1.0/authenticate \
+CLIENT_REQUEST=$( http --verify=no POST https://kong:8443/authenticate/$API_VERSION \
 	client_id=$MOB_CLIENT_ID \
 	client_secret=$MOB_CLIENT_SECRET \
+	scope=${SECURE_API_REQUEST_PATHS[0]}/$API_VERSION \
 	username=$AUTH_USERNAME \
 	password=$AUTH_PASSWORD )
 
@@ -62,30 +71,29 @@ fi
 # data. It must be this way as the RFC requires and Kong only responses to the request
 # in this format.
 
-#Note also that the specific API must be invoked and the provision_key used must be the one
-# associated with that specific API.
+# Note also that the *specific* secure API's /oauth2/token endpoint must be
+# invoked and the provision_key used must be the one associated with that
+# specific API. The Authentication Service must use the 'scope' parameter to
+# determine which specific secure API to call for the token. Note that the Kong
+# ACL plugin will reject the request if the client_id is not permissioned to
+# access that specific API (ie, it is not 'scope'd for that API)
 
 echo Now calling the /oauth2/token endpoint of a specific API on Kong to get an oauth token
-echo POST https://kong:8443/consumer/v1.0/oauth2/token
+echo POST https://kong:8443${SECURE_API_REQUEST_PATHS[0]}/oauth2/token
 echo grant_type=password
 echo client_id=$MOB_CLIENT_ID
 echo client_secret=$MOB_CLIENT_SECRET
-echo username=$AUTH_USERNAME
-echo password=$AUTH_PASSWORD
-echo provision_key=$consumer_api_v1_0_KEY
+echo provision_key=$consumer_KEY
 echo authenticated_userid=$AUTH_USERNAME
 echo
 echo
 echo Please refer to the code comments for more information.
 
-
-ACCESS_TOKEN_RESPONSE=$( http --form --verify=no POST https://kong:8443/consumer/v1.0/oauth2/token \
+ACCESS_TOKEN_RESPONSE=$( http --form --verify=no POST https://kong:8443${SECURE_API_REQUEST_PATHS[0]}/oauth2/token \
 	grant_type=password \
 	client_id=$MOB_CLIENT_ID \
 	client_secret=$MOB_CLIENT_SECRET \
-	username=$AUTH_USERNAME \
-	password=$AUTH_PASSWORD \
-	provision_key=$consumer_api_v1_0_KEY \
+	provision_key=$consumer_KEY \
 	authenticated_userid=$AUTH_USERNAME )
 
 ACCESS_TOKEN=$(echo $ACCESS_TOKEN_RESPONSE | jq '.access_token' -r)
@@ -106,5 +114,5 @@ echo
 # the below call makes the call again, from the perspective of the Client app (or SDK) on the assumption
 # that this data was successfully sent back to the client.
 echo Now calling the API with the token just received.
-http --verify=no --print HBhb GET https://kong:8443/consumer/v1.0/hello.json \
+http --verify=no --print HBhb GET https://kong:8443${SECURE_API_REQUEST_PATHS[0]}/$API_VERSION/hello.json \
 	Authorization:"Bearer $ACCESS_TOKEN" \

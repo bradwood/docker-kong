@@ -2,7 +2,7 @@
     "priority": 1,
     "request": {
         "method": "POST",
-        "url": "/v1.0/authenticate",
+        "url": "/authenticate/v1.0",
         "bodyPatterns": [
             { "equalToJson": "{ \"username\": \"brad\", \"password\": \"xQ845c\" }", "jsonCompareMode": "LENIENT"  }
         ]
