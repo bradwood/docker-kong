@@ -43,6 +43,7 @@ CLIENT_REQUEST=$( http --verify=no POST https://kong:8443/authenticate/$API_VERS
 	username=$AUTH_USERNAME \
 	password=$AUTH_PASSWORD )
 
+
 echo
 
 if [ $(echo $CLIENT_REQUEST | grep -c "Successfully authenticated") -eq 1 ]; then

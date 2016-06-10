@@ -2,7 +2,7 @@
     "priority": 2,
     "request": {
         "method": "POST",
-        "url": "/authenticate/v1.0"
+        "url": "/authenticate/v1"
     },
     "response": {
             "status": 401,

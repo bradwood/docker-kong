@@ -32,10 +32,11 @@ AUTENTICATE_API_STRIP_REQUEST_PATH=false
 
 # The version of the API that is being called by the client app, and which is being
 # served by the services. Note that the internal service abstraction layer will be able
-# to map major.minor version number calls to the appropriate internal (back-end) services
-# using a more granual versioning scheme (major.minor.patch) or similar.
+# to map major version number calls to the appropriate internal (back-end) services
+# using a more granual versioning scheme (major.minor.patch) or similar. THis is
+# based on semantic versioning (http://semver.org)
 
-API_VERSION=v1.0
+API_VERSION=v1
 
 #IMPORTANT -- the below must agree with those set up in wiremock
 #See the wiremock mountpoint at wiremock:/mappings/user_authenticate_*.json
