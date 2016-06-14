@@ -1,8 +1,0 @@
-#!/bin/bash
-
-echo "Waiting for Postgres on $POSTGRES_HOSTNAME:$POSTGRES_PORT..." \
-  && while ! nc $POSTGRES_HOSTNAME $POSTGRES_PORT </dev/null; do sleep 0.3; done \
-  && echo "Postgres is ready! Launching Kong..." \
-  && /setup.sh \
-  && kong start \
-  && tail -f /usr/local/kong/logs/error.log

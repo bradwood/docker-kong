@@ -1,12 +1,16 @@
-#FROM bradqwood/kong
-# taking the latest build from mashape.
-FROM mashape/kong
-# a fork from mashape/kong
-MAINTAINER Bradley Wood <docker@bradleywood.com>
+FROM mashape/kong:latest
+
 ENV POSTGRES_HOSTNAME kong-database
 ENV POSTGRES_PORT 5432
 
-COPY start_kong /usr/bin/start_kong
-RUN ["chmod", "+x","/usr/bin/start_kong"]
-CMD /usr/bin/start_kong
+ENV DOCKERIZE_VERSION v0.2.0
 
+RUN yum install -y epel-release && yum install -y wget \
+    && yum clean all
+
+RUN wget -nv https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+
+COPY ./kong.yml /etc/kong/kong.yml
+
+CMD dockerize -wait tcp://$POSTGRES_HOSTNAME:$POSTGRES_PORT kong start
