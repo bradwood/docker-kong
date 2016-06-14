@@ -86,7 +86,7 @@ echo client_id=$MOB_CLIENT_ID
 echo client_secret=$MOB_CLIENT_SECRET
 echo provision_key=$consumer_KEY
 echo authenticated_userid=$AUTH_USERNAME
-echo
+echo scope=${SECURE_API_REQUEST_PATHS[0]}/$API_VERSION
 echo
 echo Please refer to the code comments for more information.
 
@@ -94,8 +94,10 @@ ACCESS_TOKEN_RESPONSE=$( http --form --verify=no POST https://kong:8443${SECURE_
 	grant_type=password \
 	client_id=$MOB_CLIENT_ID \
 	client_secret=$MOB_CLIENT_SECRET \
+	scope=${SECURE_API_REQUEST_PATHS[0]}/$API_VERSION \
 	provision_key=$consumer_KEY \
 	authenticated_userid=$AUTH_USERNAME )
+
 
 ACCESS_TOKEN=$(echo $ACCESS_TOKEN_RESPONSE | jq '.access_token' -r)
 REFRESH_TOKEN=$(echo $ACCESS_TOKEN_RESPONSE | jq '.refresh_token' -r)

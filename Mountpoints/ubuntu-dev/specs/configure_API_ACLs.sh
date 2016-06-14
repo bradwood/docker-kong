@@ -3,6 +3,7 @@
 # load variable names
 . api_config_variables
 
+# note, ACLS not needed for /authenticate or /signup as these need to be accessible by anyone
 
 echo Creating new whitelist groups for secure APIs...
 echo

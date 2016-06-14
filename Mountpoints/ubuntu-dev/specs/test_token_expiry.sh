@@ -24,8 +24,7 @@ echo POST https://kong:8443${SECURE_API_REQUEST_PATHS[0]}/oauth2/token
 echo grant_type=password
 echo client_id=$MOB_CLIENT_ID
 echo client_secret=$MOB_CLIENT_SECRET
-echo username=$AUTH_USERNAME
-echo password=$AUTH_PASSWORD
+echo scope=${SECURE_API_REQUEST_PATHS[0]}/$API_VERSION
 echo provision_key=$consumer_KEY
 echo authenticated_userid=$AUTH_USERNAME
 
@@ -34,8 +33,7 @@ ACCESS_TOKEN_RESPONSE=$( http --form --verify=no POST https://kong:8443${SECURE_
 	grant_type=password \
 	client_id=$MOB_CLIENT_ID \
 	client_secret=$MOB_CLIENT_SECRET \
-	username=$AUTH_USERNAME \
-	password=$AUTH_PASSWORD \
+	scope=${SECURE_API_REQUEST_PATHS[0]}/$API_VERSION \
 	provision_key=$consumer_KEY \
 	authenticated_userid=$AUTH_USERNAME )
 
@@ -86,6 +84,7 @@ REFRESH_TOKEN_RESPONSE=$(http --form --verify=no POST https://kong:8443${SECURE_
 	grant_type=refresh_token \
 	refresh_token=$REFRESH_TOKEN \
 	client_id=$MOB_CLIENT_ID \
+	scope=${SECURE_API_REQUEST_PATHS[0]}/$API_VERSION \
 	client_secret=$MOB_CLIENT_SECRET )
 
 
@@ -99,7 +98,8 @@ echo access_token: $ACCESS_TOKEN
 echo refresh_token: $REFRESH_TOKEN
 echo token_type: $TOKEN_TYPE
 echo expires_in: $EXPIRES_IN
-echo
+echo scope=${SECURE_API_REQUEST_PATHS[0]}/$API_VERSION
+
 
 echo Now calling the API with the new access_token just received.
 http --verify=no --print HBhb GET https://kong:8443${SECURE_API_REQUEST_PATHS[0]}/$API_VERSION/hello.json \

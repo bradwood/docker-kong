@@ -3,7 +3,7 @@
 # Note all the SECURE_* variables are associated to each other by ordinality (1st, 2nd, 3rd, etc)
 # - a poor man's hash/struct data type.
 
-#API names for various APIS set up in Kong. These will be secured via the OAUTH2 mechanism
+#API names for various APIs set up in Kong. These will be secured via the OAUTH2 RESOURCE OWNER GRANT mechanism
 #and form part of the URLs used to manage the APIs on the Kong admin port (8001)
 SECURE_API_NAMES=('consumer' 'merchant' 'm-manager' 'admin')
 # Upstream URLs for each API -- all point to the same wiremock service root directory
@@ -24,11 +24,22 @@ SECURE_API_WHITELIST_GROUPS=( 'consumer_group,admin_group' \
 							  'admin_group')
 
 
-#API used to authenticate and authorise a user. Will issue an OAUTH token and also managed OAUTH token re-issues
+# API used to authenticate and authorise a user. Will issue an OAUTH token and also managed OAUTH token re-issues.
+# This API is itself not secured by Kong, as it needs to proxy unauthenticated requests to authenticate to the
+# authentication service.
 AUTHENTICATE_API_NAME=authenticate
 AUTHENTICATE_API_UPSTREAM_URL=https://wiremock:8081/
 AUTHENTICATE_API_REQUEST_PATH=/authenticate
-AUTENTICATE_API_STRIP_REQUEST_PATH=false
+AUTHENTICATE_API_STRIP_REQUEST_PATH=false
+
+# API used to sign up a new user to the system -- this API will use OAUTH2 also, but will *only* authenticate the
+# client application before allowing access to the /signup endpoint. This is a different OAUTH2 grant mechanism,
+# the OAUTH2 CLIENT CREDENTIALS GRANT, where no username/password is required, only a client_id and client_secret.
+
+SIGNUP_API_NAME=signup
+SIGNUP_API_UPSTREAM_URL=https://wiremock:8081/
+SIGNUP_API_REQUEST_PATH=/signup
+SIGNUP_API_STRIP_REQUEST_PATH=false
 
 # The version of the API that is being called by the client app, and which is being
 # served by the services. Note that the internal service abstraction layer will be able

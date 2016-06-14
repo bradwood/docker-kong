@@ -16,11 +16,22 @@ for i in "${!SECURE_API_NAMES[@]}"; do
 		config.only_https=true
 done
 
-echo Installing SSL Plugin and loading certificates for authentication API
+echo Installing SSL Plugin and loading certificates for Authentication API
 echo
 
 echo
 http POST kong:8001/apis/$AUTHENTICATE_API_NAME/plugins \
+	name=ssl \
+	config.cert=@./server.crt \
+	config.key=@./server.key \
+	config.only_https=true
+
+
+echo Installing SSL Plugin and loading certificates for Signup API
+echo
+
+echo
+http POST kong:8001/apis/$SIGNUP_API_NAME/plugins \
 	name=ssl \
 	config.cert=@./server.crt \
 	config.key=@./server.key \
