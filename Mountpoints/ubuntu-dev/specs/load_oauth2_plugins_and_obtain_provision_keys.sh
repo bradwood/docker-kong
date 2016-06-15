@@ -9,10 +9,15 @@ cp /dev/null $PROVISION_KEY_FILE
 echo Installing OAUTH2 Plugin and enabling CLIENT Credentials Grant for Signup APIs...
 
 # build up a scope string for the Auth API of all the scopes we will accept on it.
-for i in "${!SECURE_API_NAMES[@]}"; do
-	SCOPES+="${SECURE_API_NAMES[$i]}/$API_VERSION "
+#format is comma-separated, but without spaces.
+for i in "${!SECURE_API_REQUEST_PATHS[@]}"; do
+	SCOPES+="${SECURE_API_REQUEST_PATHS[$i]}/$API_VERSION,"
 done
 
+# need to strip off the trailing comma now
+SCOPES=$(echo $SCOPES | sed -e 's/,$//')
+echo scopes $SCOPES
+echo
 echo installing OAUTH2 plugin for $SIGNUP_API_NAME ... \(client credentials grant\)
 
 SIGNUP_API_PROVISION_KEY=$( http POST kong:8001/apis/$SIGNUP_API_NAME/plugins \

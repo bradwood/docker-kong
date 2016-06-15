@@ -58,7 +58,7 @@ AUTH_PASSWORD=xQ845c
 #OAUTH Specifics
 #OAUTH_TOKEN_EXPIRATION=7200 # in seconds = 2hrs
 # reduced for testing purposes
-OAUTH_TOKEN_EXPIRATION=30 # seconds -- default is 2 hours.
+OAUTH_TOKEN_EXPIRATION=5 # seconds -- default is 2 hours.
 
 #CONSUMER CONFIGURATION
 #Set up consumer name prefixes in an array
