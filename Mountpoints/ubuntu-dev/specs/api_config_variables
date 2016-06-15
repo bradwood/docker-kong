@@ -31,6 +31,8 @@ AUTHENTICATE_API_NAME=authenticate
 AUTHENTICATE_API_UPSTREAM_URL=https://wiremock:8081/
 AUTHENTICATE_API_REQUEST_PATH=/authenticate
 AUTHENTICATE_API_STRIP_REQUEST_PATH=false
+AUTHENTICATE_API_PER_MIN_RATE_LIMIT=30 #times per minute.  See https://getkong.org/plugins/rate-limiting/
+
 
 # API used to sign up a new user to the system -- this API will use OAUTH2 also, but will *only* authenticate the
 # client application before allowing access to the /signup endpoint. This is a different OAUTH2 grant mechanism,

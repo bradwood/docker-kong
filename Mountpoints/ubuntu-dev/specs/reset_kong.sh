@@ -23,4 +23,7 @@
 #apply ACLs to consumers
 ./configure_consumer_ACLs.sh
 
-#TODO: add API thottling...
+# add API thottling...
+./throttle_authentication_API.sh
+
+# TODO: Add IP address whitelisting for non-consumer secure APIs (e.g, merchant, admin, etc)
