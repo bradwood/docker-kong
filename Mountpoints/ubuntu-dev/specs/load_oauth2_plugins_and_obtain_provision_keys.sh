@@ -6,7 +6,7 @@
 # empty out the provision key file
 cp /dev/null $PROVISION_KEY_FILE
 
-echo Installing OAUTH2 Plugin and enabling CLIENT Credentials Grant for Signup APIs...
+echo Installing OAUTH2 Plugin and enabling CLIENT Credentials Grant for Client APIs...
 
 # build up a scope string for the Auth API of all the scopes we will accept on it.
 #format is comma-separated, but without spaces.
@@ -18,9 +18,9 @@ done
 SCOPES=$(echo $SCOPES | sed -e 's/,$//')
 echo scopes $SCOPES
 echo
-echo installing OAUTH2 plugin for $SIGNUP_API_NAME ... \(client credentials grant\)
+echo installing OAUTH2 plugin for $CLIENT_API_NAME ... \(client credentials grant\)
 
-SIGNUP_API_PROVISION_KEY=$( http POST kong:8001/apis/$SIGNUP_API_NAME/plugins \
+CLIENT_API_PROVISION_KEY=$( http POST kong:8001/apis/$CLIENT_API_NAME/plugins \
 	name="oauth2" \
 	config.enable_authorization_code=false \
 	config.enable_password_grant=false \
@@ -30,8 +30,8 @@ SIGNUP_API_PROVISION_KEY=$( http POST kong:8001/apis/$SIGNUP_API_NAME/plugins \
 	config.token_expiration=$OAUTH_TOKEN_EXPIRATION \
 	| jq '.config.provision_key' -r )
 
-echo Provision key for $SIGNUP_API_NAME obtained \( $SIGNUP_API_PROVISION_KEY \)
-	echo ${SIGNUP_API_NAME}_KEY\=$SIGNUP_API_PROVISION_KEY >> $PROVISION_KEY_FILE.tmp
+echo Provision key for $CLIENT_API_NAME obtained \( $CLIENT_API_PROVISION_KEY \)
+	echo ${CLIENT_API_NAME}_KEY\=$CLIENT_API_PROVISION_KEY >> $PROVISION_KEY_FILE.tmp
 
 
 echo

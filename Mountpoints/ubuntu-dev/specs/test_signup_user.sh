@@ -14,18 +14,18 @@
 # Since there is no username/password in this Client Credentials flow, we just need to
 # Authenticate using the client credentials first in order to obtain an access key.
 #
-# NOTE: There are no no refresh tokens issued in this flow, so the signup must occur
+# NOTE: There are no no refresh tokens issued in this flow, so the client must occur
 # within the expires_in timeframe or it will fail.
 
-echo calling signup API as an a mobile client and passing:
+echo calling client API as an a mobile client and passing:
 echo
-echo POST https://kong:8443/signup/oauth2/token
+echo POST https://kong:8443/client/oauth2/token
 echo client_id=$MOB_CLIENT_ID
 echo client_secret=$MOB_CLIENT_SECRET
 echo scope=${SECURE_API_REQUEST_PATHS[0]}/$API_VERSION #tells the system which APIs we want
 echo
 
-ACCESS_TOKEN_RESPONSE=$( http --form --verify=no POST https://kong:8443/signup/oauth2/token \
+ACCESS_TOKEN_RESPONSE=$( http --form --verify=no POST https://kong:8443/client/oauth2/token \
 	grant_type=client_credentials \
 	client_id=$MOB_CLIENT_ID \
 	client_secret=$MOB_CLIENT_SECRET \
@@ -48,7 +48,7 @@ echo Now that we have client credentials, we call the newuser endpoint to create
 echo user.
 
 echo Now calling the API with the token just received.
-http --verify=no --print HBhb POST https://kong:8443/signup/$API_VERSION/newuser \
+http --verify=no --print HBhb POST https://kong:8443/client/$API_VERSION/newuser \
 	Authorization:"Bearer $ACCESS_TOKEN" \
 	username=$AUTH_USERNAME \
 	password=$AUTH_PASSWORD

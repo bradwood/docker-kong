@@ -34,14 +34,15 @@ AUTHENTICATE_API_STRIP_REQUEST_PATH=false
 AUTHENTICATE_API_PER_MIN_RATE_LIMIT=30 #times per minute.  See https://getkong.org/plugins/rate-limiting/
 
 
-# API used to sign up a new user to the system -- this API will use OAUTH2 also, but will *only* authenticate the
-# client application before allowing access to the /signup endpoint. This is a different OAUTH2 grant mechanism,
-# the OAUTH2 CLIENT CREDENTIALS GRANT, where no username/password is required, only a client_id and client_secret.
+# API used to sign up a new user to the system and to reset a password. -- this API will use OAUTH2 also,
+# but will *only* authenticate the client application before allowing access to the /signup endpoint. This
+# is a different OAUTH2 grant mechanism the OAUTH2 CLIENT CREDENTIALS GRANT, where no username/password is
+# required, only a client_id and client_secret.
 
-SIGNUP_API_NAME=signup
-SIGNUP_API_UPSTREAM_URL=https://wiremock:8081/
-SIGNUP_API_REQUEST_PATH=/signup
-SIGNUP_API_STRIP_REQUEST_PATH=false
+CLIENT_API_NAME=client
+CLIENT_API_UPSTREAM_URL=https://wiremock:8081/
+CLIENT_API_REQUEST_PATH=/client
+CLIENT_API_STRIP_REQUEST_PATH=false
 
 # The version of the API that is being called by the client app, and which is being
 # served by the services. Note that the internal service abstraction layer will be able

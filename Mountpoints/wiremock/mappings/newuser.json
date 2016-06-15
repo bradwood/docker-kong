@@ -2,7 +2,7 @@
     "priority": 1,
     "request": {
         "method": "POST",
-        "url": "/signup/v1/newuser",
+        "url": "/client/v1/newuser",
         "bodyPatterns": [
             { "equalToJson": "{ \"username\": \"brad\", \"password\": \"xQ845c\" }", "jsonCompareMode": "LENIENT"  }
         ]

@@ -27,11 +27,11 @@ http POST kong:8001/apis/$AUTHENTICATE_API_NAME/plugins \
 	config.only_https=true
 
 
-echo Installing SSL Plugin and loading certificates for Signup API
+echo Installing SSL Plugin and loading certificates for CLIENT API
 echo
 
 echo
-http POST kong:8001/apis/$SIGNUP_API_NAME/plugins \
+http POST kong:8001/apis/$CLIENT_API_NAME/plugins \
 	name=ssl \
 	config.cert=@./server.crt \
 	config.key=@./server.key \

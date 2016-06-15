@@ -17,19 +17,19 @@ http POST kong:8001/apis \
 	request_path=$AUTHENTICATE_API_REQUEST_PATH \
 	strip_request_path=$AUTHENTICATE_API_STRIP_REQUEST_PATH
 
-# delete the (semi-secure) signup API
-echo Deleting any old Signup API \(if it exists\)...
+# delete the (semi-secure) client API
+echo Deleting any old Client API \(if it exists\)...
 echo
-http DELETE kong:8001/apis/$SIGNUP_API_NAME
+http DELETE kong:8001/apis/$CLIENT_API_NAME
 
-echo Creating Signup API $SIGNUP_API_NAME
+echo Creating CLIENT API $CLIENT_API_NAME
 echo
 
 http POST kong:8001/apis \
-	name=$SIGNUP_API_NAME \
-	upstream_url=$SIGNUP_API_UPSTREAM_URL \
-	request_path=$SIGNUP_API_REQUEST_PATH \
-	strip_request_path=$SIGNUP_API_STRIP_REQUEST_PATH
+	name=$CLIENT_API_NAME \
+	upstream_url=$CLIENT_API_UPSTREAM_URL \
+	request_path=$CLIENT_API_REQUEST_PATH \
+	strip_request_path=$CLIENT_API_STRIP_REQUEST_PATH
 
 
 # delete secure APIs if they werethere before
