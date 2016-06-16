@@ -52,6 +52,9 @@ CLIENT_API_STRIP_REQUEST_PATH=false
 
 API_VERSION=v1
 
+# used to say whether Kong will send the X-Correlation-ID header back to the client.
+CORRELATION_ID_ECHO_DOWNSTREAM=true
+
 #IMPORTANT -- the below must agree with those set up in wiremock
 #See the wiremock mountpoint at wiremock:/mappings/user_authenticate_*.json
 AUTH_USERNAME=brad

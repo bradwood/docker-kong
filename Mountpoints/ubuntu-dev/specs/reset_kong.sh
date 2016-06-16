@@ -23,6 +23,9 @@
 #apply ACLs to consumers
 ./configure_consumer_ACLs.sh
 
+#set up Correlation IDs to track upstream calls when logging
+./load_correlationid_plugins.sh
+
 # add API thottling...
 ./throttle_authentication_API.sh
 
