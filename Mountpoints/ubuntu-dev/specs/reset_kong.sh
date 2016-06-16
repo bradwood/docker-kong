@@ -30,3 +30,5 @@
 ./throttle_authentication_API.sh
 
 # TODO: Add IP address whitelisting for non-consumer secure APIs (e.g, merchant, admin, etc)
+# not implemented yet in testing, but see https://getkong.org/plugins/ip-restriction/ to
+# implement
