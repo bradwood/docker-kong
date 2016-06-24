@@ -6,12 +6,17 @@
 # empty out the provision key file
 cp /dev/null $PROVISION_KEY_FILE
 
-echo Installing OAUTH2 Plugin and enabling CLIENT Credentials Grant for Client APIs...
+echo Installing OAUTH2 Plugin and enabling CLIENT Credentials Grant for Client API...
 
 # build up a scope string for the Auth API of all the scopes we will accept on it.
 #format is comma-separated, but without spaces.
-for i in "${!SECURE_API_REQUEST_PATHS[@]}"; do
-	SCOPES+="${SECURE_API_REQUEST_PATHS[$i]}/$API_VERSION,"
+# for i in "${!SECURE_API_REQUEST_PATHS[@]}"; do
+# 	SCOPES+="${SECURE_API_REQUEST_PATHS[$i]}/$API_VERSION,"
+# done
+
+# update -- removed the version no from the acceptable scopes string.
+for i in "${!SECURE_API_SCOPES[@]}"; do
+	SCOPES+="${SECURE_API_SCOPES[$i]},"
 done
 
 # need to strip off the trailing comma now
@@ -44,11 +49,12 @@ echo Installing OAUTH2 Plugin and enabling RESOURCE OWNER Credentials Grant for 
 
 for i in "${!SECURE_API_NAMES[@]}"; do
 	echo installing OAUTH2 plugin for ${SECURE_API_NAMES[$i]} ... \(resource owner credentials grant\)
+	API_SCOPE=$(echo ${SECURE_API_NAMES[0]} | sed -e 's/-v.//') # use the API name for the scope, but strip the training "-vx" first
 	PROVISION_KEY=$( http POST kong:8001/apis/${SECURE_API_NAMES[$i]}/plugins \
 		name="oauth2" \
 		config.enable_authorization_code=false \
 		config.enable_password_grant=true \
-		config.scopes="${SECURE_API_REQUEST_PATHS[0]}/$API_VERSION" \
+		config.scopes="$API_SCOPE" \
 		config.mandatory_scope=true \
 		config.token_expiration=$OAUTH_TOKEN_EXPIRATION \
 		| jq '.config.provision_key' -r )

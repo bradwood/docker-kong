@@ -12,7 +12,7 @@ while true; do # repeat forever
 	time http --verify=no --check-status -v POST https://kong:8443/authenticate/$API_VERSION \
 		client_id=$MOB_CLIENT_ID \
 		client_secret=$MOB_CLIENT_SECRET \
-		scope=${SECURE_API_REQUEST_PATHS[0]}/$API_VERSION \
+		scope=${SECURE_API_SCOPES[0]} \
 		username=$AUTH_USERNAME \
 		password=$AUTH_PASSWORD
 

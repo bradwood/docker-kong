@@ -19,17 +19,17 @@
 
 echo calling client API as an a mobile client and passing:
 echo
-echo POST https://kong:8443/client/oauth2/token
+echo POST https://kong:8443/client/v1/oauth2/token
 echo client_id=$MOB_CLIENT_ID
 echo client_secret=$MOB_CLIENT_SECRET
-echo scope=${SECURE_API_REQUEST_PATHS[0]}/$API_VERSION #tells the system which APIs we want
+echo scope=${SECURE_API_SCOPES[0]} #tells the system which APIs we want
 echo
 
-ACCESS_TOKEN_RESPONSE=$( http --form --verify=no POST https://kong:8443/client/oauth2/token \
+ACCESS_TOKEN_RESPONSE=$( http --form --verify=no POST https://kong:8443/client/v1/oauth2/token \
 	grant_type=client_credentials \
 	client_id=$MOB_CLIENT_ID \
 	client_secret=$MOB_CLIENT_SECRET \
-	scope=${SECURE_API_REQUEST_PATHS[0]}/$API_VERSION )
+	scope=${SECURE_API_SCOPES[0]} )
 
 ACCESS_TOKEN=$(echo $ACCESS_TOKEN_RESPONSE | jq '.access_token' -r)
 REFRESH_TOKEN=$(echo $ACCESS_TOKEN_RESPONSE | jq '.refresh_token' -r) #should return null
@@ -48,7 +48,7 @@ echo Now that we have client credentials, we call the newuser endpoint to create
 echo user.
 
 echo Now calling the API with the token just received.
-http --verify=no --print HBhb POST https://kong:8443/client/$API_VERSION/newuser \
+http --verify=no --print HBhb POST https://kong:8443/client/v1/newuser \
 	Authorization:"Bearer $ACCESS_TOKEN" \
 	username=$AUTH_USERNAME \
 	password=$AUTH_PASSWORD

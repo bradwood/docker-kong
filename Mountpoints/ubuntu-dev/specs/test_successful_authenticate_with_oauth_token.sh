@@ -32,17 +32,16 @@ echo
 echo POST https://kong:8443/authenticate/$API_VERSION
 echo client_id=$MOB_CLIENT_ID
 echo client_secret=$MOB_CLIENT_SECRET
-echo scope=${SECURE_API_REQUEST_PATHS[0]}/$API_VERSION #the consumer API base URL
+echo scope=${SECURE_API_SCOPES[0]}
 echo username=$AUTH_USERNAME
 echo password=$AUTH_PASSWORD
 
 CLIENT_REQUEST=$( http --verify=no POST https://kong:8443/authenticate/$API_VERSION \
 	client_id=$MOB_CLIENT_ID \
 	client_secret=$MOB_CLIENT_SECRET \
-	scope=${SECURE_API_REQUEST_PATHS[0]}/$API_VERSION \
+	scope=${SECURE_API_SCOPES[0]} \
 	username=$AUTH_USERNAME \
 	password=$AUTH_PASSWORD )
-
 
 echo
 
@@ -74,8 +73,8 @@ fi
 
 # Note also that the *specific* secure API's /oauth2/token endpoint must be
 # invoked and the provision_key used must be the one associated with that
-# specific API. The Authentication Service must use the 'scope' parameter to
-# determine which specific secure API to call for the token. Note that the Kong
+# specific API. The Authentication Service must use the 'scope' parameter and the version substring
+#Vto determine which specific secure API to call for the token. Note that the Kong
 # ACL plugin will reject the request if the client_id is not permissioned to
 # access that specific API (ie, it is not 'scope'd for that API)
 
@@ -84,9 +83,9 @@ echo POST https://kong:8443${SECURE_API_REQUEST_PATHS[0]}/oauth2/token
 echo grant_type=password
 echo client_id=$MOB_CLIENT_ID
 echo client_secret=$MOB_CLIENT_SECRET
-echo provision_key=$consumer_KEY
+echo provision_key=$consumer_v1_KEY
 echo authenticated_userid=$AUTH_USERNAME
-echo scope=${SECURE_API_REQUEST_PATHS[0]}/$API_VERSION
+echo scope=${SECURE_API_SCOPES[0]}
 echo
 echo Please refer to the code comments for more information.
 
@@ -94,8 +93,8 @@ ACCESS_TOKEN_RESPONSE=$( http --form --verify=no POST https://kong:8443${SECURE_
 	grant_type=password \
 	client_id=$MOB_CLIENT_ID \
 	client_secret=$MOB_CLIENT_SECRET \
-	scope=${SECURE_API_REQUEST_PATHS[0]}/$API_VERSION \
-	provision_key=$consumer_KEY \
+	scope=${SECURE_API_SCOPES[0]} \
+	provision_key=$consumer_v1_KEY \
 	authenticated_userid=$AUTH_USERNAME )
 
 
@@ -116,6 +115,14 @@ echo
 
 # the below call makes the call again, from the perspective of the Client app (or SDK) on the assumption
 # that this data was successfully sent back to the client.
-echo Now calling the API with the token just received.
-http --verify=no --print HBhb GET https://kong:8443${SECURE_API_REQUEST_PATHS[0]}/$API_VERSION/hello.json \
+echo Now calling the v1 API with the token just received.
+http --verify=no --print HBhb GET https://kong:8443/consumer/v1/hello.json \
+	Authorization:"Bearer $ACCESS_TOKEN" \
+
+echo Now calling the v2 API with the token just received. This should pass
+http --verify=no --print HBhb GET https://kong:8443/consumer/v2/hello.json \
+	Authorization:"Bearer $ACCESS_TOKEN" \
+
+echo Now calling the v2 API with the token just received. This should FAIL
+http --verify=no --print HBhb GET https://kong:8443/merchant/v1/hello.json \
 	Authorization:"Bearer $ACCESS_TOKEN" \

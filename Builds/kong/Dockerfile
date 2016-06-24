@@ -13,4 +13,5 @@ RUN wget -nv https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_V
 
 COPY ./kong.yml /etc/kong/kong.yml
 
-CMD dockerize -wait tcp://$POSTGRES_HOSTNAME:$POSTGRES_PORT kong start
+CMD dockerize -timeout 100s -wait tcp://$POSTGRES_HOSTNAME:$POSTGRES_PORT kong start
+

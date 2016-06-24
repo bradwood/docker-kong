@@ -69,10 +69,11 @@ services:
       - -f
       - /etc/hosts
     build: ../../Builds/ubuntu-dev/
-    ports:
-      - "2222:22"
-    expose:
-      - "22"
+#   removed to avoid D4W bug.
+    # ports:
+    #   - "2222:22"
+    # expose:
+    #   - "22"
     networks:
       - my-net
 

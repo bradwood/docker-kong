@@ -24,8 +24,8 @@ echo POST https://kong:8443${SECURE_API_REQUEST_PATHS[0]}/oauth2/token
 echo grant_type=password
 echo client_id=$MOB_CLIENT_ID
 echo client_secret=$MOB_CLIENT_SECRET
-echo scope=${SECURE_API_REQUEST_PATHS[0]}/$API_VERSION
-echo provision_key=$consumer_KEY
+echo scope=${SECURE_API_SCOPES[0]}
+echo provision_key=$consumer_v1_KEY
 echo authenticated_userid=$AUTH_USERNAME
 
 
@@ -33,8 +33,8 @@ ACCESS_TOKEN_RESPONSE=$( http --form --verify=no POST https://kong:8443${SECURE_
 	grant_type=password \
 	client_id=$MOB_CLIENT_ID \
 	client_secret=$MOB_CLIENT_SECRET \
-	scope=${SECURE_API_REQUEST_PATHS[0]}/$API_VERSION \
-	provision_key=$consumer_KEY \
+	scope=${SECURE_API_SCOPES[0]} \
+	provision_key=$consumer_v1_KEY \
 	authenticated_userid=$AUTH_USERNAME )
 
 ACCESS_TOKEN=$(echo $ACCESS_TOKEN_RESPONSE | jq '.access_token' -r)
@@ -55,7 +55,7 @@ echo
 # the below call is from the perspective of the Client app (or SDK) on the assumption
 # that this data was successfully sent back to the client.
 echo Now calling the API with the token just received.
-http --verify=no --print HBhb GET https://kong:8443${SECURE_API_REQUEST_PATHS[0]}/$API_VERSION/hello.json \
+http --verify=no --print HBhb GET https://kong:8443${SECURE_API_REQUEST_PATHS[0]}/hello.json \
 	Authorization:"Bearer $ACCESS_TOKEN" \
 
 #now we wait for the expiry period to pass and try again.
@@ -64,7 +64,7 @@ echo ...
 sleep $(($EXPIRES_IN +1 ))
 
 echo Now calling the API with the token $EXPIRES_IN seconds ago. This should fail.
-http --verify=no --print HBhb GET https://kong:8443${SECURE_API_REQUEST_PATHS[0]}/$API_VERSION/hello.json \
+http --verify=no --print HBhb GET https://kong:8443${SECURE_API_REQUEST_PATHS[0]}/hello.json \
 	Authorization:"Bearer $ACCESS_TOKEN" \
 
 # The below call is to be made by the Authentication service when a client call comes in to it at:
@@ -102,7 +102,7 @@ echo scope=${SECURE_API_REQUEST_PATHS[0]}/$API_VERSION
 
 
 echo Now calling the API with the new access_token just received.
-http --verify=no --print HBhb GET https://kong:8443${SECURE_API_REQUEST_PATHS[0]}/$API_VERSION/hello.json \
+http --verify=no --print HBhb GET https://kong:8443${SECURE_API_REQUEST_PATHS[0]}/hello.json \
 	Authorization:"Bearer $ACCESS_TOKEN" \
 
 #now we wait for the expiry period to pass and try again.
@@ -111,5 +111,5 @@ echo ...
 sleep $(($EXPIRES_IN +1 ))
 
 echo Now calling the API with the token $EXPIRES_IN seconds ago. This should fail.
-http --verify=no --print HBhb GET https://kong:8443${SECURE_API_REQUEST_PATHS[0]}/$API_VERSION/hello.json \
+http --verify=no --print HBhb GET https://kong:8443${SECURE_API_REQUEST_PATHS[0]}/hello.json \
 	Authorization:"Bearer $ACCESS_TOKEN" \
