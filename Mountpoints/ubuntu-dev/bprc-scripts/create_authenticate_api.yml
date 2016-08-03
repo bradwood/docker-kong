@@ -1,0 +1,65 @@
+# Requires bprc (https://github.com/bradwood/BPRC)
+--- #Creates the Kong APIs
+variables:
+#Kong host variables
+  kong_host_name: kong
+  kong_admin_port: 8001
+  kong_host_port: <%!kong_host_name%>:<%!kong_admin_port%>
+
+#generic API variables
+  wiremock_url: https://wiremock:8081/
+  api_version: v1
+  strip_request_path: false
+  only_https: true
+  ssl_cert: <%f./server.crt%>
+  ssl_key: <%f./server.key%>
+  correlation_id_echo_downstream: true
+  api_throttle_max_calls_per_minute: 30
+
+#specific API variables
+  api_name: authenticate
+
+recipe:
+  -
+    name: Delete <%!api_name%> API
+    httpmethod: DELETE
+    URL: http://<%!kong_host_port%>/apis/<%!api_name%>-<%!api_version%>
+  -
+    name: Create <%!api_name%> API
+    httpmethod: POST
+    URL: http://<%!kong_host_port%>/apis
+    request:
+      body:
+        name: <%!api_name%>-<%!api_version%>
+        upstream_url: <%!wiremock_url%>
+        request_path: /<%!api_name%>/<%!api_version%>
+        strip_request_path: <%!strip_request_path%>
+  -
+    name: Create SSL Plugin for <%!api_name%> API
+    httpmethod: POST
+    URL: http://<%!kong_host_port%>/apis/<%!api_name%>-<%!api_version%>/plugins
+    request:
+      body:
+        name: ssl
+        config.cert: <%!ssl_cert%>
+        config.key: <%!ssl_key%>
+        config.only_https: <%!only_https%>
+  -
+    name: Create Correlation ID Plugin for <%!api_name%> API
+    httpmethod: POST
+    URL: http://<%!kong_host_port%>/apis/<%!api_name%>-<%!api_version%>/plugins
+    request:
+      body:
+        name: correlation-id
+        config.header_name: X-Correlation-ID
+        config.generator: uuid#counter
+        config.echo_downstream: <%!correlation_id_echo_downstream%>
+  -
+    name: Installing Request Throttling Plugin for <%!api_name%> API
+    httpmethod: POST
+    URL: http://<%!kong_host_port%>/apis/<%!api_name%>-<%!api_version%>/plugins
+    request:
+      body:
+        name: rate-limiting
+        config.minute: <%!api_throttle_max_calls_per_minute%>
+
