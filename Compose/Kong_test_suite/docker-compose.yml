@@ -76,6 +76,8 @@ services:
     #   - "22"
     networks:
       - my-net
+    environment:
+      TERM: "xterm"
 
 # set up the networks to connect onto these containers
 networks:
