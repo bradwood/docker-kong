@@ -16,7 +16,7 @@ variables:
   consumer_name: RBSplc
   scope: <%!api_name%>
   # the below was received from kong when the API was created.
-  consumer_api_provision_key: ab8be74d63924188bd6ca0910ab42958
+  consumer_api_provision_key: 2fa86d67a5c94370b224519bf3d403bd
 # user credentials
   auth_username: brad
   auth_password: xQ845c
@@ -41,6 +41,8 @@ recipe:
     name: Make the call that Authentication Service would make to get tokens
     httpmethod: POST
     URL: https://<%!kong_api%>/<%!api_name%>/<%!api_version%>/oauth2/token
+    options:
+      request.body_format: form # sets the Content-type to application/x-www-form-urlencoded and urlencodes the body instead of JSON.
     request:
       body:
         grant_type: password

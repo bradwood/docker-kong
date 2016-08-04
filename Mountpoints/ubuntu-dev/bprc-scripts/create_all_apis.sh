@@ -7,7 +7,7 @@ for f in $(ls -1 create*api.yml)
 do
 	cat $f | bprc \
 	--log-level=debug \
-	--output-format=raw \
+	--output-format=raw-all \
 	--skip-http-errors \
 	--output-file=$f.output
 done
