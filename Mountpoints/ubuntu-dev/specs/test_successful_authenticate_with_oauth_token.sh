@@ -45,7 +45,7 @@ CLIENT_REQUEST=$( http --verify=no POST https://kong:8443/authenticate/$API_VERS
 
 echo
 
-if [ $(echo $CLIENT_REQUEST | grep -c "Successfully authenticated") -eq 1 ]; then
+if [ $(echo $CLIENT_REQUEST | grep -c "Authentication Okay") -eq 1 ]; then
 	#successful authentication
 	echo STATUS:success
 else
@@ -96,6 +96,8 @@ ACCESS_TOKEN_RESPONSE=$( http --form --verify=no POST https://kong:8443${SECURE_
 	scope=${SECURE_API_SCOPES[0]} \
 	provision_key=$consumer_v1_KEY \
 	authenticated_userid=$AUTH_USERNAME )
+
+echo $ACCESS_TOKEN_RESPONSE
 
 
 ACCESS_TOKEN=$(echo $ACCESS_TOKEN_RESPONSE | jq '.access_token' -r)

@@ -3,7 +3,7 @@
 echo Truncated logfile...
 cp /dev/null bprc.log
 
-for f in $(ls -1 create*.yml)
+for f in $(ls -1 create*api.yml)
 do
 	cat $f | bprc \
 	--log-level=debug \
@@ -11,3 +11,6 @@ do
 	--skip-http-errors \
 	--output-file=$f.output
 done
+
+echo Quick grep of the output files for any HTTP errors
+grep ^HTTP create_*output

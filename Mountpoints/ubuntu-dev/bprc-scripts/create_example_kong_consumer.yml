@@ -1,0 +1,38 @@
+# Requires bprc (https://github.com/bradwood/BPRC)
+--- #Creates a single, example, consumer record and OAUTH2 credentials in Kong
+variables:
+#Kong host variables
+  kong_host_name: kong
+  kong_admin_port: 8001
+  kong_host_port: <%!kong_host_name%>:<%!kong_admin_port%>
+
+#specific Consumer variables
+  consumer_name: RBSplc
+  consumer_custom_id: UUID-that-points-to-a-record-in-the-Client-microservice
+  consumer_oauth_app_name: RBS Mobile Banking iOS app
+  consumer_group: consumer_group
+  ## the below is not used in our implementation but is mandated by the OAUTH2 RFC.
+  consumer_oauth_redirect_uri: http://wiremock:8080/oauth_redirect_url
+
+recipe:
+  -  # step 0
+    name: Delete <%!consumer_name%> Consumer Object
+    httpmethod: DELETE
+    URL: http://<%!kong_host_port%>/consumers/<%!consumer_name%>
+  -  # step 1
+    name: Create <%!consumer_name%> Consumer Object
+    httpmethod: POST
+    URL: http://<%!kong_host_port%>/consumers/
+    request:
+      body:
+        username: <%!consumer_name%> # optional, but handy: see https://getkong.org/docs/0.8.x/admin-api/#retrieve-consumer
+        custom_id: <%!consumer_custom_id%>
+  -  # step 2
+    name: Create <%!consumer_name%> OAUTH2 Application
+    httpmethod: POST
+    #grab the id field obtained from step 1 and add it to this URL
+    URL: http://<%!kong_host_port%>/consumers/<%=steps[1].response.body["id"]%>/oauth2
+    request:
+      body:
+        name: <%!consumer_oauth_app_name%> ##TODO: check if spaces work here
+        redirect_uri: <%!consumer_oauth_redirect_uri%>

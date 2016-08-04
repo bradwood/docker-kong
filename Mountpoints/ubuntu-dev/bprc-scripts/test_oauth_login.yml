@@ -1,0 +1,51 @@
+# Requires bprc (https://github.com/bradwood/BPRC)
+--- #Tests OAUTH2 logging in.
+variables:
+#Kong host variables
+  kong_host_name: kong
+  kong_admin_port: 8001
+  kong_api_port: 8443 #SSL only
+  kong_admin: <%!kong_host_name%>:<%!kong_admin_port%>
+  kong_api: <%!kong_host_name%>:<%!kong_api_port%> # SSL only
+
+#API variables
+  api_name: consumer
+  api_version: v1
+
+# name of Consumer Record in Kong
+  consumer_name: RBSplc
+  scope: <%!api_name%>
+  # the below was received from kong when the API was created.
+  consumer_api_provision_key: ab8be74d63924188bd6ca0910ab42958
+# user credentials
+  auth_username: brad
+  auth_password: xQ845c
+
+recipe:
+  -  # step 0
+    name: Get the client credentials #Note, normally, these would be provided manually.
+    httpmethod: GET
+    URL: http://<%!kong_admin%>/consumers/<%!consumer_name%>/oauth2
+    #The above returns client_id and client_secret, which will be used below.
+  -  # step 1
+    name: Try to autenticate
+    httpmethod: POST
+    URL: https://<%!kong_api%>/authenticate/<%!api_version%>
+    request:
+      body:
+        client_id: <%=steps[0].response.body["data"][0]["client_id"]%> # returns an array with 1 item
+        client_secret: <%=steps[0].response.body["data"][0]["client_secret"]%>
+        username: <%!auth_username%>
+        password: <%!auth_password%>
+  -  # step 2
+    name: Make the call that Authentication Service would make to get tokens
+    httpmethod: POST
+    URL: https://<%!kong_api%>/<%!api_name%>/<%!api_version%>/oauth2/token
+    request:
+      body:
+        grant_type: password
+        client_id: <%=steps[0].response.body["data"][0]["client_id"]%> # returns an array with 1 item
+        client_secret: <%=steps[0].response.body["data"][0]["client_secret"]%>
+        scope: <%!scope%>
+        authenticated_userid: <%!auth_username%>
+        provision_key: <%!consumer_api_provision_key%>
