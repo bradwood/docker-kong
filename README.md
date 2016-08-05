@@ -1,5 +1,15 @@
 # Docker-Kong
 
+# IMPORTANT NOTE FOR BIDCO USERS
+
+The shell scripts to configure Kong are now deprecated. Please only use the scripts
+shown in the `Mountpoints/ubuntu-dev/bprc-scripts/` folder of this repo.
+
+You will need to install the tool `bprc` to run these. Please see [the github repo](https://github.com/bradwood/BPRC) for details 
+
+-----------
+
+
 This is a collection of Docker containers with the appropriate docker images, docker-compose scaffolding and scripts to get [Kong](http://getkong.org), the API management tool, up and running. *_It is NOT for PRODUCTION use!_*
 
 ## What it does
