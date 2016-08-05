@@ -7,9 +7,7 @@ variables:
   kong_host_port: <%!kong_host_name%>:<%!kong_admin_port%>
 
 #generic API variables
-  wiremock_url: https://wiremock:8081/
   api_version: v1
-  strip_request_path: false
   only_https: true
   ssl_cert: <%f./server.crt%>
   ssl_key: <%f./server.key%>
@@ -18,6 +16,11 @@ variables:
 
 #specific API variables
   api_name: authenticate
+  # note, for this specific API this is set to true to allow access to
+  # only one specific endpoint on the Authentcation Service
+  strip_request_path: true
+  # in order to only expose the specific
+  wiremock_url: https://wiremock:8081/authenticate/v1
 
 recipe:
   -
