@@ -67,7 +67,7 @@ echo Now calling the API with the token $EXPIRES_IN seconds ago. This should fai
 http --verify=no --print HBhb GET https://kong:8443${SECURE_API_REQUEST_PATHS[0]}/hello.json \
 	Authorization:"Bearer $ACCESS_TOKEN" \
 
-# The below call is to be made by the Authentication service when a client call comes in to it at:
+# The below call is to be made by the Client to Kong once the token has expired. comes in to it at:
 # POST https://kong:8443/authenticate/$API_VERSION/refresh
 
 echo
