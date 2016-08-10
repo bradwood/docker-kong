@@ -89,3 +89,11 @@ recipe:
       body:
         name: acl
         config.whitelist: <%!permitted_groups%>
+  -
+    name: Installing Request Transformer <%!api_name%> API
+    httpmethod: POST
+    URL: http://<%!kong_host_port%>/apis/<%!api_name%>-<%!api_version%>/plugins
+    request:
+      body:
+        name: request-transformer
+        config.remove.headers: <%!remove_header_list%>

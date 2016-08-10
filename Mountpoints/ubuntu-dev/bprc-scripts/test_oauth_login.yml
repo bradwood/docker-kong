@@ -22,12 +22,29 @@ variables:
   auth_password: xQ845c
 
 recipe:
-  -  # step 0
-    name: Get the client credentials #Note, normally, these would be provided manually.
+### THE FOLLOWING CALLS ARE JUST TO GET THE DATA NEEDED TO DO THE OAUTH DANCE.
+
+  -  # step 0 -- Set up call -- not part of the client OAUTH DANCE.
+    name: Get the client credentials # Note, normally, these would be provided manually.
     httpmethod: GET
     URL: http://<%!kong_admin%>/consumers/<%!consumer_name%>/oauth2
     #The above returns client_id and client_secret, which will be used below.
-  -  # step 1
+  -  # step 1 -- Set up call -- not part of the client OAUTH DANCE.
+    name: Get the API ID  # Note API ID required to get the provision key in step 2.
+    httpmethod: GET
+    URL: http://<%!kong_admin%>/apis/<%!api_name%>-<%!api_version%>
+    #The above returns the id of the API, which will be used below
+  -  # step 2 - Fetch the Provision Key from the Kong Admin API
+    name: Get Provision Key
+    httpmethod: GET
+    URL: http://<%!kong_admin%>/plugins
+    request:
+      querystring:
+        name: oauth2
+        api_id: <%=steps[1].response.body["id"]%>
+
+### NOW THE PROPER OAUTH2 DANCE STARTS.
+  -  # step 3
     name: Try to autenticate
     httpmethod: POST
     URL: https://<%!kong_api%>/authenticate/<%!api_version%>
@@ -37,7 +54,7 @@ recipe:
         client_secret: <%=steps[0].response.body["data"][0]["client_secret"]%>
         username: <%!auth_username%>
         password: <%!auth_password%>
-  -  # step 2
+  -  # step 4
     name: Make the call that Authentication Service would make to get tokens
     httpmethod: POST
     URL: https://<%!kong_api%>/<%!api_name%>/<%!api_version%>/oauth2/token
@@ -50,4 +67,6 @@ recipe:
         client_secret: <%=steps[0].response.body["data"][0]["client_secret"]%>
         scope: <%!scope%>
         authenticated_userid: <%!auth_username%>
-        provision_key: <%!consumer_api_provision_key%>
+        provision_key: <%=steps[2].response.body["data"][0]["config"]["provision_key"]%>
+
+#TBC.... but you get the idea....

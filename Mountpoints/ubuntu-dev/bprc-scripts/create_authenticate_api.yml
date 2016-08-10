@@ -13,6 +13,17 @@ variables:
   ssl_key: <%f./server.key%>
   correlation_id_echo_downstream: true
   api_throttle_max_calls_per_minute: 30
+  # Note, below headers are removed to prevent spoofing of them by external callers to this API
+  # Kong will add these headers as needed when proxying an external call to an upstream
+  # (backing) service
+  remove_header_list: >
+    Via,
+    X-Consumer_ID,
+    X-Consumer-Custom-ID,
+    X-Consumer-Username,
+    X-Authenticated-Scope,
+    X-Authenticated-Userid,
+    X-Correlation-ID
 
 #specific API variables
   api_name: authenticate
@@ -65,4 +76,12 @@ recipe:
       body:
         name: rate-limiting
         config.minute: <%!api_throttle_max_calls_per_minute%>
+  -
+    name: Installing Request Transformer <%!api_name%> API
+    httpmethod: POST
+    URL: http://<%!kong_host_port%>/apis/<%!api_name%>-<%!api_version%>/plugins
+    request:
+      body:
+        name: request-transformer
+        config.remove.headers: <%!remove_header_list%>
 
