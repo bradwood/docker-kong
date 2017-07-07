@@ -1,3 +1,4 @@
 *.sublime-workspace
 client_credentials
 provision_keys
+.DS_Store
