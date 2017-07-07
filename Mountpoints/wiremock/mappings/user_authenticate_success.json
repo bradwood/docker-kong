@@ -9,9 +9,9 @@
     },
     "response": {
             "status": 200,
-            "body": "Successfully authenticated user credentials on the Authentication Service",
+            "body": "{\"message\": \"Authentication Okay\"}",
             "headers": {
-                    "Content-Type": "text/plain"
+                    "Content-Type": "application/json"
             }
     }
 }

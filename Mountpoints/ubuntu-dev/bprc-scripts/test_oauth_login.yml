@@ -1,0 +1,72 @@
+# Requires bprc (https://github.com/bradwood/BPRC)
+--- #Tests OAUTH2 logging in.
+variables:
+#Kong host variables
+  kong_host_name: kong
+  kong_admin_port: 8001
+  kong_api_port: 8443 #SSL only
+  kong_admin: <%!kong_host_name%>:<%!kong_admin_port%>
+  kong_api: <%!kong_host_name%>:<%!kong_api_port%> # SSL only
+
+#API variables
+  api_name: consumer
+  api_version: v1
+
+# name of Consumer Record in Kong
+  consumer_name: RBSplc
+  scope: <%!api_name%>
+  # the below was received from kong when the API was created.
+  consumer_api_provision_key: 2fa86d67a5c94370b224519bf3d403bd
+# user credentials
+  auth_username: brad
+  auth_password: xQ845c
+
+recipe:
+### THE FOLLOWING CALLS ARE JUST TO GET THE DATA NEEDED TO DO THE OAUTH DANCE.
+
+  -  # step 0 -- Set up call -- not part of the client OAUTH DANCE.
+    name: Get the client credentials # Note, normally, these would be provided manually.
+    httpmethod: GET
+    URL: http://<%!kong_admin%>/consumers/<%!consumer_name%>/oauth2
+    #The above returns client_id and client_secret, which will be used below.
+  -  # step 1 -- Set up call -- not part of the client OAUTH DANCE.
+    name: Get the API ID  # Note API ID required to get the provision key in step 2.
+    httpmethod: GET
+    URL: http://<%!kong_admin%>/apis/<%!api_name%>-<%!api_version%>
+    #The above returns the id of the API, which will be used below
+  -  # step 2 - Fetch the Provision Key from the Kong Admin API
+    name: Get Provision Key
+    httpmethod: GET
+    URL: http://<%!kong_admin%>/plugins
+    request:
+      querystring:
+        name: oauth2
+        api_id: <%=steps[1].response.body["id"]%>
+
+### NOW THE PROPER OAUTH2 DANCE STARTS.
+  -  # step 3
+    name: Try to autenticate
+    httpmethod: POST
+    URL: https://<%!kong_api%>/authenticate/<%!api_version%>
+    request:
+      body:
+        client_id: <%=steps[0].response.body["data"][0]["client_id"]%> # returns an array with 1 item
+        client_secret: <%=steps[0].response.body["data"][0]["client_secret"]%>
+        username: <%!auth_username%>
+        password: <%!auth_password%>
+  -  # step 4
+    name: Make the call that Authentication Service would make to get tokens
+    httpmethod: POST
+    URL: https://<%!kong_api%>/<%!api_name%>/<%!api_version%>/oauth2/token
+    options:
+      request.body_format: form # sets the Content-type to application/x-www-form-urlencoded and urlencodes the body instead of JSON.
+    request:
+      body:
+        grant_type: password
+        client_id: <%=steps[0].response.body["data"][0]["client_id"]%> # returns an array with 1 item
+        client_secret: <%=steps[0].response.body["data"][0]["client_secret"]%>
+        scope: <%!scope%>
+        authenticated_userid: <%!auth_username%>
+        provision_key: <%=steps[2].response.body["data"][0]["config"]["provision_key"]%>
+
+#TBC.... but you get the idea....

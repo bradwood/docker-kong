@@ -2,3 +2,7 @@
 client_credentials
 provision_keys
 .DS_Store
+*.zip
+*.log
+*.out*
+*.tar.gz

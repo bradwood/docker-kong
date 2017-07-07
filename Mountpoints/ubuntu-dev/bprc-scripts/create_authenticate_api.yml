@@ -1,0 +1,87 @@
+# Requires bprc (https://github.com/bradwood/BPRC)
+--- #Creates the Kong APIs
+variables:
+#Kong host variables
+  kong_host_name: kong
+  kong_admin_port: 8001
+  kong_host_port: <%!kong_host_name%>:<%!kong_admin_port%>
+
+#generic API variables
+  api_version: v1
+  only_https: true
+  ssl_cert: <%f./server.crt%>
+  ssl_key: <%f./server.key%>
+  correlation_id_echo_downstream: true
+  api_throttle_max_calls_per_minute: 30
+  # Note, below headers are removed to prevent spoofing of them by external callers to this API
+  # Kong will add these headers as needed when proxying an external call to an upstream
+  # (backing) service
+  remove_header_list: >
+    Via,
+    X-Consumer_ID,
+    X-Consumer-Custom-ID,
+    X-Consumer-Username,
+    X-Authenticated-Scope,
+    X-Authenticated-Userid,
+    X-Correlation-ID
+
+#specific API variables
+  api_name: authenticate
+  # note, for this specific API this is set to true to allow access to
+  # only one specific endpoint on the Authentcation Service
+  strip_request_path: true
+  # in order to only expose the specific
+  wiremock_url: https://wiremock:8081/authenticate/v1
+
+recipe:
+  -
+    name: Delete <%!api_name%> API
+    httpmethod: DELETE
+    URL: http://<%!kong_host_port%>/apis/<%!api_name%>-<%!api_version%>
+  -
+    name: Create <%!api_name%> API
+    httpmethod: POST
+    URL: http://<%!kong_host_port%>/apis
+    request:
+      body:
+        name: <%!api_name%>-<%!api_version%>
+        upstream_url: <%!wiremock_url%>
+        request_path: /<%!api_name%>/<%!api_version%>
+        strip_request_path: <%!strip_request_path%>
+  -
+    name: Create SSL Plugin for <%!api_name%> API
+    httpmethod: POST
+    URL: http://<%!kong_host_port%>/apis/<%!api_name%>-<%!api_version%>/plugins
+    request:
+      body:
+        name: ssl
+        config.cert: <%!ssl_cert%>
+        config.key: <%!ssl_key%>
+        config.only_https: <%!only_https%>
+  -
+    name: Create Correlation ID Plugin for <%!api_name%> API
+    httpmethod: POST
+    URL: http://<%!kong_host_port%>/apis/<%!api_name%>-<%!api_version%>/plugins
+    request:
+      body:
+        name: correlation-id
+        config.header_name: X-Correlation-ID
+        config.generator: uuid#counter
+        config.echo_downstream: <%!correlation_id_echo_downstream%>
+  -
+    name: Installing Request Throttling Plugin for <%!api_name%> API
+    httpmethod: POST
+    URL: http://<%!kong_host_port%>/apis/<%!api_name%>-<%!api_version%>/plugins
+    request:
+      body:
+        name: rate-limiting
+        config.minute: <%!api_throttle_max_calls_per_minute%>
+  -
+    name: Installing Request Transformer <%!api_name%> API
+    httpmethod: POST
+    URL: http://<%!kong_host_port%>/apis/<%!api_name%>-<%!api_version%>/plugins
+    request:
+      body:
+        name: request-transformer
+        config.remove.headers: <%!remove_header_list%>
+
